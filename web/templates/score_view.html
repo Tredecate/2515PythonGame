@@ -1,12 +1,19 @@
 ﻿{% extends "base.html" %}
 {% block content %}
 
-<h1>Scores</h1>
+<h1>Leaderboard</h1>
+<section class="wrapper">
+    <div class="column1">
+        <ol>
+            {% for score in scores %}
+                <li>{{ score.name }}: {{ score.score }}pts</li>
+            {% endfor %}
+                <li> Tim: 100 pts </li>
+        </ol>
+    </div>
+    <div class="column2">
 
-<ul>
-{% for score in scores %}
-    <li>{{ score.name }}: {{ score.score }}pts</li>
-{% endfor %}
-</ul>
+    </div>
+</div>
 
 {% endblock %}
