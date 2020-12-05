@@ -7,10 +7,12 @@ score_manager = ScoreManager()
 
 @app.route('/')
 def homepage():
+    """ Renders homepage listing all scores. """
     return render_template("score_view.html", scores=score_manager.scores)
 
 @app.route('/api/list', methods=["GET"])
 def list_all_scores():
+    """ Renders web page listing all scores """
     return {"scores": score_manager.scores}
 
 @app.route('/api/list', methods=["DELETE"])
