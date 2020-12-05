@@ -14,17 +14,3 @@ class App:
         except Exception as e:
             print("Could not start the game.")
             print(e)
-
-    def run(self):
-        """ This is the main method for our application
-
-        It runs indefinitely until the game is either won or lost
-        """
-        if not hasattr(self, "_game_controller"):
-            return
-
-        while True:
-            try:
-                self._game_controller.tick()
-            except SystemExit:
-                break
