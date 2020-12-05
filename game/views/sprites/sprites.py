@@ -3,12 +3,15 @@ import pygame.locals
 import os.path
 import math
 
-
 class SpriteManager():
+    """ A utility class for this file that loads a tileset from the harddrive """
+
     def __init__(self):
+        """ Initializes this class """
         self.tileset = self._load_tile_table("tileset.png", 16, 16, 2, False)
 
     def get_main_sprites(self):
+        """ Returns a dictionary of mappings from labels to sprites """
         return {
             "floor": self.tileset[1][1],
             "chest.closed": self.tileset[4][5],
@@ -52,8 +55,15 @@ class SpriteManager():
         return tile_table
 
 class MapTile(pygame.sprite.Sprite):
-    """ A basic, static, map tile """
+    """ A basic, static, map tile. Inherits from Sprite """
     def __init__(self, image, x, y):
+        """ Initializes this class
+        
+        Args:
+            image (Surface): The image for this tile
+            x (int): The x position of this tile
+            y (int): The y position of this tile
+        """
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
@@ -61,7 +71,13 @@ class MapTile(pygame.sprite.Sprite):
         self.rect.y = y
 
 class PgPlayer(pygame.sprite.Sprite):
+    """ A sprite to represent the player. Inherits from Sprite """
     def __init__(self, player):
+        """ Initializes this class
+
+        Args:
+            player (Player): The player object this sprite is representing
+        """
         super().__init__()
         sprites = SpriteManager().get_main_sprites()
 
@@ -76,6 +92,7 @@ class PgPlayer(pygame.sprite.Sprite):
         self.rect.y = self.player.pos[1] * 16 * 4 + 16
     
     def update(self):
+        """ Generic sprite update function. Moves and animates """
         self.img_idx += 0.1 if self.img_idx < 3 else -3
         self.image = self.images[math.floor(self.img_idx)]
 
@@ -83,7 +100,17 @@ class PgPlayer(pygame.sprite.Sprite):
         self.rect.y = self.player.pos[1] * 16 * 4 + 16
 
 class Chest(pygame.sprite.Sprite):
+    """ A sprite to represent game items. Inherits from Sprite """
     def __init__(self, images, x, y, map_x, map_y):
+        """ Initializes this class
+
+        Args:
+            image (Surface): The image for this sprite
+            x (int): The x position of this sprite
+            y (int): The y position of this sprite
+            map_x (int): The x index of this sprite on the map
+            map_y (int): The y index of this sprite on the map
+        """
         super().__init__()
         self.pos = (map_x, map_y)
 
@@ -95,6 +122,11 @@ class Chest(pygame.sprite.Sprite):
         self.rect.y = y
     
     def update(self, current_map):
+        """ Generic sprite update function. Changes image depending on state
+        
+        Args:
+            current_map (list): The current map state
+        """
         if current_map[self.pos[0]][self.pos[1]] != "I":
             self.image = self.images[1]
         else:
@@ -102,7 +134,13 @@ class Chest(pygame.sprite.Sprite):
 
 
 class Finish(pygame.sprite.Sprite):
+    """ A sprite to represent the end flag. Inherits from Sprite """
     def __init__(self, current_map):
+        """ Initializes this class
+
+        Args:
+            current_map (list): The current map state
+        """
         super().__init__()
         self.image = SpriteManager().get_main_sprites()["player.dead"]
 
@@ -118,6 +156,7 @@ class ChestBuilder():
     """ Builds and returns a sprite group with the map chests """
     @classmethod
     def build(self, current_map):
+        """ Returns a Group of sprites containing all the map items """
         sprites = SpriteManager().get_main_sprites()
         chests = pygame.sprite.Group()
 
@@ -132,6 +171,7 @@ class MapBuilder():
     """ Builds and returns a sprite group with the map tiles """
     @classmethod
     def build(self, current_map):
+        """ Returns a Group of sprites containing all the map tiles """
         map_tiles = pygame.sprite.Group()
 
         character_mapping = {
@@ -153,25 +193,3 @@ class MapBuilder():
                 map_tiles.add(MapTile(image, x*16*4 + 16*2, y*16*4 + 16*2))
         
         return map_tiles
-
-if __name__=='__main__':
-    pygame.init()
-
-    screen = pygame.display.set_mode((1600, 900))
-    table = SpriteManager().get_main_sprites()
-    show_full_sheet = False
-
-    if show_full_sheet:
-        for x, row in enumerate(SpriteManager()._load_tile_table("tileset.png", 16, 16, 3, False)):
-            for y, tile in enumerate(row):
-                screen.blit(tile, (x*17*3, y*17*3))
-                screen.blit(pygame.font.SysFont('arial', 24).render(f"{x}, {y}", True, (255, 0, 0)), (x*17*3, y*17*3))
-    else:
-        for x, item in enumerate(table.items()):
-            screen.blit(item[1], (x%6*40*2, math.floor(x/6)*40*2))
-            screen.blit(pygame.font.SysFont('arial', 14).render(f"{item[0]}", True, (255, 0, 0)), (x%6*40*2, math.floor(x/6)*40*2 + 50))
-
-    pygame.display.flip()
-
-    while pygame.event.wait().type != pygame.locals.QUIT:
-        pass

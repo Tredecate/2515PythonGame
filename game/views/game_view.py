@@ -1,17 +1,18 @@
 from views.sprites.sprites import MapBuilder, ChestBuilder, Finish, PgPlayer
-from models.player import Player
 
 import pygame
 import pygame.locals
 
 class GameView:
-    """ Class that handles displaying the game to the user """
+    """ Class that handles displaying the game to the user, as well as user input """
 
-    def __init__(self, player: Player, game_controller, current_map):
+    def __init__(self, player, game_controller, current_map):
         """ Instantiates the GameView class
         
         Args:
-            player (Player): The player object for this session 
+            player (Player): The player object for this session
+            game_controller (GameController): The GameController object for this session
+            current_map (2D list): The starting state of the map
         """
         self._player = player
         self._game_controller = game_controller
@@ -35,10 +36,10 @@ class GameView:
         pygame.time.set_timer(pygame.USEREVENT, 1000)
     
     def render(self, maze):
-        """ Prints the current game view as returned by a private function
+        """ Starts the main pygame game loop
         
         Args:
-            current_map (2D list): The current map-state 
+            maze (Maze): The Maze object for this session 
         """
         running = True
         while running:
@@ -79,6 +80,10 @@ class GameView:
         print(self._get_game_over_display(game_controller))
     
     def process_pygame_inputs(self):
+        """ Gets and processes the pygame player inputs 
+
+            Returns: (str) The direction to go in (WASD)
+        """
         keys = pygame.key.get_pressed()
         if keys[pygame.locals.K_RIGHT]:
             return "d"
@@ -88,38 +93,6 @@ class GameView:
             return "w"
         elif keys[pygame.locals.K_DOWN]:
             return "s"
-    
-    def _get_text_map_display(self, current_map: list):
-        """ Returns the current state of the game for the player
-        
-        Args:
-            current_map (2D list): The current map-state 
-        """
-        character_mapping = {"#": "█", "P": "☻", "I": "♫", "O": "♥", "-": " ", "E": "♦"}
-        rows_to_print = list()
-        
-        # map body
-        for y in range(len(current_map[0])):
-            row_to_print = "    |"
-
-            for x in range(len(current_map)):
-                row_to_print += character_mapping[current_map[x][y]] + (" " if x != len(current_map) - 1 else "")
-            
-            rows_to_print.append(row_to_print + "|    ")
-    
-        # header and footer
-        rows_to_print.insert(0, "" + "=" * len(rows_to_print[0]))
-        rows_to_print.insert(0, "" + f'{f"Points: {self._player.items}/5" : ^{len(rows_to_print[1])}}')
-        rows_to_print.insert(0, "\n" + "=" * len(rows_to_print[2]))
-        rows_to_print.append("=" * len(rows_to_print[3]))
-
-        # stringify list
-        output = ""
-
-        for row in rows_to_print:
-            output += row + "\n"
-        
-        return output.rstrip()
 
     def _get_game_over_display(self, game_controller):
         """ Returns a game over screen
