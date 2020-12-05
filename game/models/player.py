@@ -13,6 +13,7 @@ class Player:
         self._x, self._y = maze.locate_object("P")[0]
         self._maze = maze
         self._items = 0
+        self._prev_tile = "-"
     
     @property
     def pos(self):
@@ -34,11 +35,17 @@ class Player:
         Returns: (str) The character the player moved on top of
         """
         if self._maze.check_if_empty(x, y):
+            next_change = self._prev_tile
+            self._prev_tile = "-"
 
             if (x, y) in self._maze.locate_object("I"):
+                self._prev_tile = "O"
                 self._items += 1
 
-            self._maze.set_cell(self._x, self._y, "-")
+            if (x, y) in self._maze.locate_object("O"):
+                self._prev_tile = "O"
+
+            self._maze.set_cell(self._x, self._y, next_change)
 
             self._x = x
             self._y = y

@@ -43,6 +43,7 @@ class Maze:
         Valid characters:
             P: player
             I: item
+            O: empty item
             -: empty space
             #: wall 
         
@@ -51,7 +52,7 @@ class Maze:
         if not self._valid_coord(x, y):
             return
 
-        if char in ("P", "I", "-", "#"):
+        if char in ("P", "I", "-", "#", "O"):
             old_char = self._maze_map[x][y]
             self._maze_map[x][y] = char
 
