@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<h1>Scores</h1>
+
+<ul>
+{% for score in scores %}
+    <li>{{ score.name }}: {{ score.score }}pts</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
